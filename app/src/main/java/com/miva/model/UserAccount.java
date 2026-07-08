@@ -32,4 +32,13 @@ public class UserAccount {
 public String getName() { return name; }
 public List<String> getBorrowingHistory() { return borrowingHistory; }
 
+
+
+// Return as string representation
+@Override
+public String toString() {
+    return this.name + " (" + this.userId + ")";
+}
+
+
 }

@@ -69,7 +69,7 @@ public class BooksPanel extends JPanel {
         JButton btnRefresh = new java.awt.Button("🔄 Refresh Data").getParent() != null ? new JButton() : new JButton("🔄 Refresh Data");
         btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnRefresh.setBackground(new Color(52, 73, 94));
-        btnRefresh.setForeground(Color.WHITE);
+        btnRefresh.setForeground(Color.BLACK);
         btnRefresh.setFocusPainted(false);
         btnRefresh.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnRefresh.addActionListener(e -> refreshData());

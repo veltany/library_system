@@ -135,8 +135,24 @@ public class AdminPanel extends JPanel {
         btnUndo.setForeground(Color.WHITE);
         btnUndo.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+
+        JButton btnUserManage = new JButton("👥 User Management Portal");
+btnUserManage.setFont(new Font("Segoe UI", Font.BOLD, 13));
+btnUserManage.setBackground(new Color(52, 152, 219)); // Clean Royal Blue palette match
+btnUserManage.setForeground(Color.WHITE);
+btnUserManage.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+// 2. Wire the listener to look up the parent frame ancestor window routing handle
+btnUserManage.addActionListener(e -> {
+    Window rootAncestor = SwingUtilities.getWindowAncestor(btnUserManage);
+    if (rootAncestor instanceof MainWindow) {
+        ((MainWindow) rootAncestor).switchScreen("UserManagement");
+    }
+});
+
         buttonRow.add(btnAdd);
         buttonRow.add(btnUndo);
+        buttonRow.add(btnUserManage);
 
         gbc.gridx = 1; gbc.gridy = 5; gbc.weightx = 0.7;
         formCard.add(buttonRow, gbc);

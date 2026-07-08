@@ -6,5 +6,13 @@
     "author": "dd",
     "year": 33,
     "isAvailable": true
+  },
+  {
+    "isbn": "3456-78889-9999",
+    "id": "B75D9692",
+    "title": "Things Fall Apart",
+    "author": "Chinua achebe",
+    "year": 1997,
+    "isAvailable": true
   }
 ]

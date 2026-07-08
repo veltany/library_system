@@ -1,4 +1,51 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.debug.settings.onBuildFailureProceed": true
+    "java.debug.settings.onBuildFailureProceed": true,
+    "editor.formatOnSave": true,
+
+    
+  /* --- 1. CORE VISUALS & ENHANCED FONTS --- */
+  "editor.fontSize": 14,
+  "editor.lineHeight": 22,
+  "editor.fontLigatures": true,
+  "editor.letterSpacing": 0.5,
+  "editor.fontFamily": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
+
+  /* --- 2. CODE LAYOUT & WHITESPACE (THE SPACING ENGINE) --- */
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.trimAutoWhitespace": true,
+  "editor.renderWhitespace": "selection",
+
+  /* --- 3. AUTO-CLEANUP MECHANISMS ON SAVE --- */
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  /* --- 4. STRUCTURAL ANCHORS & COGNITIVE RECOVERY --- */
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.guides.indentation": true,
+  "editor.renderLineHighlight": "all",
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": "on",
+
+  /* --- 5. COMPACT CODE ORGANIZATION & MAPS --- */
+  "editor.minimap.enabled": true,
+  "editor.minimap.side": "right",
+  "editor.minimap.renderCharacters": false,
+  "editor.wordWrap": "on",
+  "editor.wrappingIndent": "indent",
+
+  /* --- 6. TARGETED JAVA REFACTOR ENGINES --- */
+  "[java]": {
+    "editor.suggestSelection": "first",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  }
+
+
 }

@@ -64,8 +64,10 @@ public class SideBar extends JPanel {
         JButton btnView = createNavigationButton("📋  View Items", false);
         JButton btnBorrow = createNavigationButton("🔄  Borrow / Return", false);
         JButton btnSearch = createNavigationButton("🔍  Search & Sort", false);
+        JButton btnUserHub = createNavigationButton("👥  User Management", false);
 
-        JButton[] navButtons = {btnHome, btnAdmin, btnView, btnBorrow, btnSearch};
+
+        JButton[] navButtons = {btnHome, btnAdmin, btnView, btnBorrow, btnSearch, btnUserHub};
         
         // Start out with Dashboard locked into focus state
         applyButtonState(btnHome, true);
@@ -75,12 +77,17 @@ public class SideBar extends JPanel {
         btnView.addActionListener(e -> handleNavClick("ViewItems", btnView, navButtons));
         btnBorrow.addActionListener(e -> handleNavClick("BorrowReturn", btnBorrow, navButtons));
         btnSearch.addActionListener(e -> handleNavClick("SearchSort", btnSearch, navButtons));
+        btnUserHub.addActionListener(e -> handleNavClick("UserManagement", btnUserHub, navButtons));
+
+
 
         this.add(btnHome);   this.add(Box.createVerticalStrut(8));
         this.add(btnAdmin);  this.add(Box.createVerticalStrut(8));
         this.add(btnView);   this.add(Box.createVerticalStrut(8));
         this.add(btnBorrow); this.add(Box.createVerticalStrut(8));
         this.add(btnSearch);
+        this.add(Box.createVerticalStrut(8));
+        this.add(btnUserHub);
 
         // 4. Flexible Layout Spacer pushing footer down to the edge bottom margin
         this.add(Box.createVerticalGlue());

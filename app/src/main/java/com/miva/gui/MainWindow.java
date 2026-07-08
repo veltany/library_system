@@ -2,6 +2,8 @@ package com.miva.gui;
 
 import com.miva.controller.LibraryManager;
 import com.miva.gui.items.ItemsViewPanel;
+import com.miva.gui.users.UserManagementHub;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -35,14 +37,17 @@ public class MainWindow extends JFrame {
         homePanel = new HomePanel(manager, this);
         adminPanel = new AdminPanel(manager);
         viewItemsPanel = new ItemsViewPanel(manager, this);
-        borrowReturnPanel = createPlaceholderPanel("Borrow & Return Controls");
+        borrowReturnPanel = new BorrowPanel(manager);
         searchSortPanel = createPlaceholderPanel("Search, Sort & Filters");
+        UserManagementHub userHub = new UserManagementHub(manager.getUserManager());
+        
 
         centerContentPane.add(homePanel, "Home");
         centerContentPane.add(adminPanel, "Admin");
         centerContentPane.add(viewItemsPanel, "ViewItems");
         centerContentPane.add(borrowReturnPanel, "BorrowReturn");
         centerContentPane.add(searchSortPanel, "SearchSort");
+        centerContentPane.add(userHub, "UserManagement");
 
         // 2. ATTACH THE SEPARATE PREMIUM SIDEBAR COMPONENT
         // Lambda interceptor seamlessly catches string tokens whenever nav nodes are clicked

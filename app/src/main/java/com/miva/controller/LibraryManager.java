@@ -18,6 +18,10 @@ public class LibraryManager {
     private DatabaseManager db;
     private UserAccountDatabase userDb;
 
+    private final UserManager userManager;
+
+
+
 
     public LibraryManager() {
        
@@ -28,6 +32,8 @@ public class LibraryManager {
         // initialise database
         this.db = new DatabaseManager();
         this.userDb = new UserAccountDatabase(db);
+        this.userManager = new UserManager(db);
+
         // load catalogue from database
         this.catalogue = new ArrayList<>(db.getItemsTable().values());
     }
@@ -105,4 +111,8 @@ public void addToReservationQueue(String reservationDetails) {
         return userDb;
     }
 
+
+    public UserManager getUserManager() {
+    return userManager;
+    }
 }

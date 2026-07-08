@@ -38,7 +38,7 @@ public class ItemsViewPanel extends JPanel {
         textGroup.add(lblHeader);
         textGroup.add(lblSub);
 
-        // 2. Action Trigger Button mapping custom popup alerts
+        // Action Trigger Buttons
         JButton btnLaunchPopup = setActionButtons(manager);
         
 
@@ -59,10 +59,6 @@ public class ItemsViewPanel extends JPanel {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
-       
-
-
-
         
         // Inject Tab configurations
         tabbedPane.addTab("📘 Books Catalogue", booksPanel);
@@ -81,6 +77,11 @@ public class ItemsViewPanel extends JPanel {
     }
 
    
+
+    /*
+
+        Setup action buttons
+    */
 
   private JButton setActionButtons(LibraryManager manager){
 

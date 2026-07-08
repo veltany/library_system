@@ -10,6 +10,15 @@ import javax.swing.SwingUtilities;
 public class App {
 
     public static void main(String[] args) {
+
+
+        // SEED TESTING UTILITY HOOK: Creates a local test account to test out circulation rules
+       var tempManager = new com.miva.controller.LibraryManager();
+       if (tempManager.getUserDatabase().getAllUsers().isEmpty()) {
+    tempManager.getUserDatabase().createUser(new com.miva.model.UserAccount("MIVA001", "Chinedu Okafor"));
+    System.out.println(" Seeding active test user profiles: ID [MIVA001] | Name [Chinedu Okafor]");
+    }
+
         // Enforce safe multi-threaded UI boot execution loop sequence on the EDT
         SwingUtilities.invokeLater(() -> {
             try {

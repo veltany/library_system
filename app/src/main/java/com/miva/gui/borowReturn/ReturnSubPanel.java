@@ -1,118 +1,117 @@
-package com.miva.gui;
+package com.miva.gui.borowReturn;
 
 import com.miva.controller.LibraryManager;
 import com.miva.model.LibraryItem;
 import com.miva.model.UserAccount;
-import com.miva.gui.borowReturn.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Optional;
 
-public class BorrowPanel extends JPanel {
+public class ReturnSubPanel extends JPanel {
     private final LibraryManager manager;
     private JTextField txtUserId, txtItemId;
     private JComboBox<String> comboAction;
 
-    private BorrowSubPanel borrowPanel;
-    private ReturnSubPanel returnPanel;
-
-    public BorrowPanel(LibraryManager manager) {
+    public ReturnSubPanel(LibraryManager manager) {
         this.manager = manager;
 
-        // Container Layout: Enforces a strict vertical stacking order
+        // Container Alignment (BoxLayout vertical layout requirement compliance)
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBorder(new EmptyBorder(30, 30, 30, 30));
         this.setBackground(new Color(248, 249, 250));
 
-        // ==========================================
-        // 1. HEADER TITLE SECTION (Strict Left-Align)
-        // ==========================================
-        JPanel headerPanel = new JPanel();
-        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        // 1. HEADER TITLE SECTION
+        JPanel headerPanel = new JPanel(new GridLayout(2, 1, 2, 2));
         headerPanel.setBackground(null);
+        headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblTitle = new JLabel("Circulation Management Desk");
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTitle.setForeground(new Color(44, 62, 80));
-        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblSubtitle = new JLabel("Process library resource borrow and return in real-time inventory circulation.");
-        lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JLabel lblSubtitle = new JLabel("Process resource checkout tokens and manage real-time inventory circulation.");
+        lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblSubtitle.setForeground(new Color(127, 140, 141));
-        lblSubtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         headerPanel.add(lblTitle);
-        headerPanel.add(Box.createVerticalStrut(4));
         headerPanel.add(lblSubtitle);
-        
         this.add(headerPanel);
-        this.add(Box.createVerticalStrut(25));
+        this.add(Box.createVerticalStrut(20));
 
-        // ==========================================
-        // 2. EQUALLY DISTRIBUTED TABS SECTION 
-        // ==========================================
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        tabbedPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // 2. TRANSACTION FORM CARD (GridBagLayout compliance)
+        JPanel formCard = new JPanel(new GridBagLayout());
+        formCard.setBackground(Color.WHITE);
+        formCard.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(230, 233, 240), 1, true),
+            new EmptyBorder(25, 25, 25, 25)
+        ));
+        formCard.setAlignmentX(Component.LEFT_ALIGNMENT);
+        formCard.setMaximumSize(new Dimension(600, 260));
 
-        this.borrowPanel = new BorrowSubPanel(manager);
-        this.returnPanel = new ReturnSubPanel(manager);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        tabbedPane.addTab("Borrow", borrowPanel);
-        tabbedPane.addTab("Return", returnPanel);
+        // Row 0: Operation Action Type
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.3;
+        formCard.add(createStyledLabel("Transaction Type:"), gbc);
+        comboAction = new JComboBox<>(new String[]{"Borrow Item", "Return Item"});
+        comboAction.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        gbc.gridx = 1; gbc.weightx = 0.7;
+        formCard.add(comboAction, gbc);
 
-        // Custom renderer to span tabs equally across the full width
-        configureEqualWidthTabs(tabbedPane);
+        // Row 1: Target Member User Identification String
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.3;
+        formCard.add(createStyledLabel("User Account ID:"), gbc);
+        txtUserId = new JTextField();
+        txtUserId.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        gbc.gridx = 1; gbc.weightx = 0.7;
+        formCard.add(txtUserId, gbc);
 
-        this.add(tabbedPane);
-    }
+        // Row 2: Target Catalogue Asset Identifier Code
+        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.3;
+        formCard.add(createStyledLabel("Library Item ID:"), gbc);
+        txtItemId = new JTextField();
+        txtItemId.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        gbc.gridx = 1; gbc.weightx = 0.7;
+        formCard.add(txtItemId, gbc);
 
-    /**
-     * Forces JTabbedPane headers to stretch across the full width evenly.
-     */
-    private void configureEqualWidthTabs(JTabbedPane tabbedPane) {
-        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-            final int index = i;
-            String title = tabbedPane.getTitleAt(index);
-            
-            // GridBagLayout panel causes components to expand evenly
-            JPanel tabComponent = new JPanel(new GridBagLayout());
-            tabComponent.setOpaque(false);
-            
-            JLabel label = new JLabel(title, SwingConstants.CENTER);
-            label.setFont(tabbedPane.getFont());
-            label.setForeground(new Color(44, 62, 80));
-            
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 1.0; 
-            
-            tabComponent.add(label, gbc);
-            
-            // Assign custom rendering panel over standard native titles
-            tabbedPane.setTabComponentAt(index, tabComponent);
-        }
+        // Row 3: Action Trigger Button Configuration
+        JButton btnSubmit = new JButton("Process Transaction");
+        btnSubmit.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnSubmit.setBackground(new Color(56, 189, 248)); // Matches our Premium Blue Accent Palette
+        btnSubmit.setForeground(new Color(15, 23, 42));
+        btnSubmit.setFocusPainted(false);
+        btnSubmit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        // Changes UI design configurations so tabs map uniformly across available window frame space
-        tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
-            @Override
-            protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
-                // Returns an even distribution sizing width calculation based on full view dimensions
-                return tabbedPane.getWidth() / tabbedPane.getTabCount() - 3;
-            }
-        });
+        gbc.gridx = 1; gbc.gridy = 3; gbc.weightx = 0.7;
+        formCard.add(btnSubmit, gbc);
+
+        this.add(formCard);
+
+        // Map operational callback trigger
+        btnSubmit.addActionListener(e -> executeCirculationPipeline());
+
+
+
+
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 13));
+
+        
     }
 
     /**
      * Requirement: Interactive Circulation Engine with comprehensive error validation handling
      */
-    private void executeCirculationPipeline( String chosenAction) {
+    private void executeCirculationPipeline() {
         String userId = txtUserId.getText().trim().toUpperCase();
         String itemId = txtItemId.getText().trim().toUpperCase();
-        //String chosenAction = (String) comboAction.getSelectedItem();
+        String chosenAction = (String) comboAction.getSelectedItem();
 
         // Check 1: Mandatory parameter validation check
         if (userId.isEmpty() || itemId.isEmpty()) {
@@ -129,6 +128,7 @@ public class BorrowPanel extends JPanel {
         UserAccount user = userOpt.get();
 
         // Check 3: Verify item records exist in inventory mapping indices
+        // We look up the item matching the ID out of our catalogue array collection
         LibraryItem targetItem = manager.getCatalogue().stream()
                 .filter(item -> item.getId().equals(itemId))
                 .findFirst()
@@ -151,6 +151,7 @@ public class BorrowPanel extends JPanel {
             boolean checkoutApproved = targetItem.borrowItem(userId);
             if (checkoutApproved) {
                 targetItem.setAvailable(false);
+                // Append log event tracking codes right down inside member history collections
                 manager.getUserDatabase().logBorrowAction(userId, itemId);
                 
                 // FORCE RESYNC: Update the central cache state registry and commit immediately to json files
@@ -179,10 +180,10 @@ public class BorrowPanel extends JPanel {
     }
 
     private void clearInputs() {
-        if (txtUserId != null) txtUserId.setText("");
-        if (txtItemId != null) txtItemId.setText("");
-        if (comboAction != null) comboAction.setSelectedIndex(0);
-        if (txtUserId != null) txtUserId.requestFocus();
+        txtUserId.setText("");
+        txtItemId.setText("");
+        comboAction.setSelectedIndex(0);
+        txtUserId.requestFocus();
     }
 
     private JLabel createStyledLabel(String text) {

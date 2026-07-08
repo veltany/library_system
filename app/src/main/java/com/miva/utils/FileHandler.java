@@ -21,15 +21,15 @@ public class FileHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public static ArrayList<LibraryItem> loadCatalogue() {
-        File file = new File(FILE_NAME);
-        if (!file.exists()) return new ArrayList<>();
+    // public static ArrayList<LibraryItem> loadCatalogue() {
+    //     File file = new File(FILE_NAME);
+    //     if (!file.exists()) return new ArrayList<>();
 
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
-            return (ArrayList<LibraryItem>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error loading data: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
+    //     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+    //         return (ArrayList<LibraryItem>) ois.readObject();
+    //     } catch (IOException | ClassNotFoundException e) {
+    //         System.err.println("Error loading data: " + e.getMessage());
+    //         return new ArrayList<>();
+    //     }
+    // }
 }

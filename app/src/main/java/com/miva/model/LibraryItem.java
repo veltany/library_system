@@ -23,4 +23,17 @@ public abstract class LibraryItem implements Borrowable {
     public int getYear() { return year; }
     
     public abstract String getItemType();
+
+    public void setAvailable(boolean available) {
+    this.isAvailable = available;
+}
+
+
+// Return as string representation
+@Override
+public String toString() {
+    return this.title + " (" + this.author + ")";
+}
+
+
 }
