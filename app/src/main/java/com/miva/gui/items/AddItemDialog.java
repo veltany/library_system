@@ -1,18 +1,32 @@
 package com.miva.gui.items;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
 import com.miva.controller.LibraryManager;
 import com.miva.model.Book;
-import com.miva.model.Magazine;
 import com.miva.model.Journal;
+import com.miva.model.Magazine;
 import com.miva.utils.IDGenerator;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
 
 public class AddItemDialog extends JDialog {
     private final LibraryManager manager;
-    
+
     private JTextField txtTitle;
     private JTextField txtAuthor;
     private JTextField txtYear;
@@ -23,12 +37,12 @@ public class AddItemDialog extends JDialog {
     public AddItemDialog(Frame owner, LibraryManager manager) {
         super(owner, "Add New Inventory Item", true); // True forces APPLICATION_MODAL freezing mechanics
         this.manager = manager;
-        
+
         // 1. Configure Layout Containers
         this.setSize(500, 380);
         this.setLocationRelativeTo(owner); // Spawns perfectly centered on top of the parent window
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        
+
         JPanel rootPane = new JPanel(new BorderLayout(0, 15));
         rootPane.setBorder(new EmptyBorder(20, 20, 20, 20));
         rootPane.setBackground(Color.WHITE);
@@ -41,44 +55,59 @@ public class AddItemDialog extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Row 0: Classification Category
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.3;
         formGrid.add(new JLabel("Item Type:"), gbc);
-        comboType = new JComboBox<>(new String[]{"Book", "Magazine", "Journal"});
+        comboType = new JComboBox<>(new String[] { "Book", "Magazine", "Journal" });
         comboType.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        gbc.gridx = 1; gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
         formGrid.add(comboType, gbc);
 
         // Row 1: Document Title text field
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.3;
         formGrid.add(new JLabel("Title:"), gbc);
         txtTitle = new JTextField();
         txtTitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        gbc.gridx = 1; gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
         formGrid.add(txtTitle, gbc);
 
         // Row 2: Author / Publisher Field
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 0.3;
         formGrid.add(new JLabel("Author / Publisher:"), gbc);
         txtAuthor = new JTextField();
         txtAuthor.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        gbc.gridx = 1; gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
         formGrid.add(txtAuthor, gbc);
 
         // Row 3: Release Timeline Tracker
-        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 0.3;
         formGrid.add(new JLabel("Publication Year:"), gbc);
         txtYear = new JTextField();
         txtYear.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        gbc.gridx = 1; gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
         formGrid.add(txtYear, gbc);
 
         // Row 4: Advanced GUI Rule: Dynamic components changing text labels at runtime
-        gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 0.3;
         lblSpec = new JLabel("ISBN:");
         formGrid.add(lblSpec, gbc);
         txtSpec = new JTextField();
         txtSpec.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        gbc.gridx = 1; gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
         formGrid.add(txtSpec, gbc);
 
         // Bind selector hook updating display strings dynamically
@@ -135,7 +164,8 @@ public class AddItemDialog extends JDialog {
     }
 
     /**
-     * Requirement Checklist: Interactive try-catch validation blocks parsing inputs safely
+     * Requirement Checklist: Interactive try-catch validation blocks parsing inputs
+     * safely
      */
     private boolean processFormSubmission() {
         String title = txtTitle.getText().trim();
@@ -146,7 +176,8 @@ public class AddItemDialog extends JDialog {
 
         // Safe Validation Check 1: Empty text fields detection
         if (title.isEmpty() || author.isEmpty() || yearStr.isEmpty() || specStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "All metadata form fields must be fully populated.", "Validation Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "All metadata form fields must be fully populated.",
+                    "Validation Warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
@@ -157,15 +188,17 @@ public class AddItemDialog extends JDialog {
 
             // Direct model catalog persistence injection pipelines
             switch (selection) {
-                case "Book" -> manager.addItem(new Book(uniqueID, title, author, year, specStr));
+                case "Book" -> manager.addItem(new Book(uniqueID, title, author, year, specStr, true));
                 case "Magazine" -> {
                     int issueNum = Integer.parseInt(specStr);
-                    manager.addItem(new Magazine(uniqueID, title, author, year, issueNum));
+                    manager.addItem(new Magazine(uniqueID, title, author, year, issueNum, true));
                 }
-                case "Journal" -> manager.addItem(new Journal(uniqueID, title, author, year, specStr));
+                case "Journal" -> manager.addItem(new Journal(uniqueID, title, author, year, specStr, true));
             }
 
-            JOptionPane.showMessageDialog(this, selection + " added into catalog file storage.\nAssigned System ID: " + uniqueID, "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    selection + " added into catalog file storage.\nAssigned System ID: " + uniqueID, "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
             return true;
 
         } catch (NumberFormatException ex) {

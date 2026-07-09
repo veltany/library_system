@@ -1,8 +1,18 @@
 package com.miva.database;
 
-import com.google.gson.*;
-import com.miva.model.*;
 import java.lang.reflect.Type;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.miva.model.Book;
+import com.miva.model.Journal;
+import com.miva.model.LibraryItem;
+import com.miva.model.Magazine;
 
 public class LibraryItemAdapter implements JsonSerializer<LibraryItem>, JsonDeserializer<LibraryItem> {
     @Override
@@ -13,23 +23,29 @@ public class LibraryItemAdapter implements JsonSerializer<LibraryItem>, JsonDese
     }
 
     @Override
-    public LibraryItem deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public LibraryItem deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         JsonElement typeElem = jsonObject.get("type");
-        
-        // SAFE FALLBACK: If the 'type' attribute is missing, don't crash. 
+
+        // SAFE FALLBACK: If the 'type' attribute is missing, don't crash.
         // Log a warning and safely default it to a plain Book container.
         if (typeElem == null) {
-            System.err.println("⚠️ Warning: Encountered legacy data missing a 'type' property. Defaulting item to 'Book'.");
+            System.err.println(
+                    " Warning: Encountered legacy data missing a 'type' property. Defaulting item to 'Book'.");
             return context.deserialize(jsonObject, Book.class);
         }
-        
+
         String type = typeElem.getAsString();
         switch (type) {
-            case "Book":     return context.deserialize(jsonObject, Book.class);
-            case "Magazine": return context.deserialize(jsonObject, Magazine.class);
-            case "Journal":  return context.deserialize(jsonObject, Journal.class);
-            default:         throw new JsonParseException("Unknown item runtime type: " + type);
+            case "Book":
+                return context.deserialize(jsonObject, Book.class);
+            case "Magazine":
+                return context.deserialize(jsonObject, Magazine.class);
+            case "Journal":
+                return context.deserialize(jsonObject, Journal.class);
+            default:
+                throw new JsonParseException("Unknown item runtime type: " + type);
         }
     }
 }

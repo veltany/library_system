@@ -1,29 +1,47 @@
 package com.miva.gui;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import com.miva.controller.LibraryManager;
+import com.miva.utils.RefreshObject;
+
 public class SideBar extends JPanel {
     private final Consumer<String> onViewChange;
-    private final Color activeBg = new Color(56, 189, 248);   // Premium Sky Blue (#38bdf8)
-    private final Color activeFg = new Color(15, 23, 42);     // Slate Dark Slate (#0f172a)
-    private final Color idleBg = new Color(30, 41, 59);       // Slate Sidebar base (#1e293b)
-    private final Color idleFg = new Color(148, 163, 184);   // Slate Light Muted (#94a3b8)
-    private final Color hoverBg = new Color(51, 65, 85);      // Slate Accent Hover (#334155)
+    private final Color activeBg = new Color(56, 189, 248);
+    private final Color activeFg = new Color(15, 23, 42);
+    private final Color idleBg = new Color(30, 41, 59);
+    private final Color idleFg = new Color(148, 163, 184);
+    private final Color hoverBg = new Color(51, 65, 85);
+    private final LibraryManager manager;
+    private final RefreshObject refreshObject;
 
-    public SideBar(Consumer<String> onViewChange) {
+    public SideBar(Consumer<String> onViewChange, LibraryManager manager, RefreshObject refreshObject) {
         this.onViewChange = onViewChange;
+        this.manager = manager;
+        this.refreshObject = refreshObject;
 
-        // 1. Structural Configuration
+        // Structural Configuration
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBorder(new EmptyBorder(24, 16, 24, 16));
         this.setBackground(idleBg);
-        
-        // Lock width dimensions matching your previous layout metrics boundary rules
+
         this.setPreferredSize(new Dimension(240, 0));
         this.setMinimumSize(new Dimension(200, 0));
         this.setMaximumSize(new Dimension(280, Integer.MAX_VALUE));
@@ -54,7 +72,7 @@ public class SideBar extends JPanel {
         brandBox.add(brandTitle);
         brandBox.add(Box.createVerticalStrut(4));
         brandBox.add(brandSubtitle);
-        
+
         this.add(brandBox);
         this.add(Box.createVerticalStrut(30)); // Spacer beneath branding header
 
@@ -66,9 +84,8 @@ public class SideBar extends JPanel {
         JButton btnSearch = createNavigationButton("🔍  Search & Sort", false);
         JButton btnUserHub = createNavigationButton("👥  User Management", false);
 
+        JButton[] navButtons = { btnHome, btnAdmin, btnView, btnBorrow, btnSearch, btnUserHub };
 
-        JButton[] navButtons = {btnHome, btnAdmin, btnView, btnBorrow, btnSearch, btnUserHub};
-        
         // Start out with Dashboard locked into focus state
         applyButtonState(btnHome, true);
 
@@ -79,12 +96,14 @@ public class SideBar extends JPanel {
         btnSearch.addActionListener(e -> handleNavClick("SearchSort", btnSearch, navButtons));
         btnUserHub.addActionListener(e -> handleNavClick("UserManagement", btnUserHub, navButtons));
 
-
-
-        this.add(btnHome);   this.add(Box.createVerticalStrut(8));
-        this.add(btnAdmin);  this.add(Box.createVerticalStrut(8));
-        this.add(btnView);   this.add(Box.createVerticalStrut(8));
-        this.add(btnBorrow); this.add(Box.createVerticalStrut(8));
+        this.add(btnHome);
+        this.add(Box.createVerticalStrut(8));
+        this.add(btnAdmin);
+        this.add(Box.createVerticalStrut(8));
+        this.add(btnView);
+        this.add(Box.createVerticalStrut(8));
+        this.add(btnBorrow);
+        this.add(Box.createVerticalStrut(8));
         this.add(btnSearch);
         this.add(Box.createVerticalStrut(8));
         this.add(btnUserHub);
@@ -144,6 +163,9 @@ public class SideBar extends JPanel {
 
         // Pass selection back to MainWindow routing switch layer
         onViewChange.accept(viewKey);
+
+        // refresh underlying panels view
+        refreshObject.refresh();
     }
 
     private void applyButtonState(JButton btn, boolean isActive) {

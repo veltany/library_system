@@ -1,23 +1,37 @@
 package com.miva.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
 import com.miva.controller.LibraryManager;
 import com.miva.gui.items.AddItemDialog;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-
 public class HomePanel extends JPanel {
     private final LibraryManager manager;
-    
+
     // UI Metric Components
     private JLabel lblBooksCount, lblMagCount, lblJournalCount, lblUsersCount, lblBorrowedCount, lblAvailCount;
     private JTextField txtSearch;
 
     public HomePanel(LibraryManager manager, MainWindow mainFrame) {
         this.manager = manager;
-        
+
         // 1. Root structural framework
         this.setLayout(new BorderLayout(0, 20));
         this.setBorder(new EmptyBorder(25, 25, 25, 25));
@@ -59,18 +73,17 @@ public class HomePanel extends JPanel {
         JPanel searchGroup = new JPanel(new BorderLayout(5, 0));
         searchGroup.setBackground(Color.WHITE);
         searchGroup.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 214, 229), 1, true),
-            new EmptyBorder(6, 12, 6, 12)
-        ));
+                BorderFactory.createLineBorder(new Color(200, 214, 229), 1, true),
+                new EmptyBorder(6, 12, 6, 12)));
 
         JLabel searchIcon = new JLabel("🔍 ");
         searchIcon.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        
+
         txtSearch = new JTextField("Search unified catalog items...", 22);
         txtSearch.setBorder(null); // Flat UI design
         txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         txtSearch.setForeground(Color.GRAY);
-        
+
         // Dynamic watermarking focus clearance handlers
         txtSearch.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -79,6 +92,7 @@ public class HomePanel extends JPanel {
                     txtSearch.setForeground(Color.BLACK);
                 }
             }
+
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (txtSearch.getText().isEmpty()) {
                     txtSearch.setText("Search unified catalog items...");
@@ -102,7 +116,8 @@ public class HomePanel extends JPanel {
     }
 
     /**
-     * Requirement Check: Grid Layout matrix building interactive telemetry tracking blocks
+     * Requirement Check: Grid Layout matrix building interactive telemetry tracking
+     * blocks
      */
     private JPanel createMetricsDashboard() {
         // 3 columns, 2 rows for balanced telemetry allocation spacing maps
@@ -129,15 +144,15 @@ public class HomePanel extends JPanel {
     }
 
     /**
-     * Helper block styling the visual look of individual metrics dashboards card items
+     * Helper block styling the visual look of individual metrics dashboards card
+     * items
      */
     private JPanel createStatCard(String title, JLabel valueLabel, Color accentColor) {
         JPanel card = new JPanel(new BorderLayout(0, 10));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(230, 233, 240), 1, true),
-            new EmptyBorder(15, 15, 15, 15)
-        ));
+                BorderFactory.createLineBorder(new Color(230, 233, 240), 1, true),
+                new EmptyBorder(15, 15, 15, 15)));
 
         // Subtle accent line banner on top of the card
         JPanel accentBar = new JPanel();
@@ -158,7 +173,8 @@ public class HomePanel extends JPanel {
     }
 
     /**
-     * Footer Buttons: Requirement checklist integration handling Add, Import, and Export configurations
+     * Footer Buttons: Requirement checklist integration handling Add, Import, and
+     * Export configurations
      */
     private JPanel createActionFooter(MainWindow mainFrame) {
         JPanel footerRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
@@ -170,14 +186,17 @@ public class HomePanel extends JPanel {
 
         // BUTTON INTERACTION TRIGGERS
         btnAdd.addActionListener(e -> {
-        // 2. Launch add new dialog pop up
-        AddItemDialog popDialog = new AddItemDialog(mainFrame, manager);
-         popDialog.setVisible(true); // Blocks background execution threads until dismissed
+            // 2. Launch add new dialog pop up
+            AddItemDialog popDialog = new AddItemDialog(mainFrame, manager);
+            popDialog.setVisible(true); // Blocks background execution threads until dismissed
         });
 
-        // Action 2 & 3 Placeholder callbacks: We will bind standard file selection boxes here shortly
-        btnImport.addActionListener(e -> JOptionPane.showMessageDialog(this, "Import File Chooser window module coming up next!"));
-        btnExport.addActionListener(e -> JOptionPane.showMessageDialog(this, "Export Save File system pipeline coming up next!"));
+        // Action 2 & 3 Placeholder callbacks: We will bind standard file selection
+        // boxes here shortly
+        btnImport.addActionListener(
+                e -> JOptionPane.showMessageDialog(this, "Import File Chooser window module coming up next!"));
+        btnExport.addActionListener(
+                e -> JOptionPane.showMessageDialog(this, "Export Save File system pipeline coming up next!"));
 
         footerRow.add(btnAdd);
         footerRow.add(btnImport);
@@ -199,7 +218,7 @@ public class HomePanel extends JPanel {
     }
 
     /**
-     * Telemetry Computing Layer: Fetches real-time counts from the local JSON database map cache vectors
+     * ReFetches real-time counts from the local JSON database map
      */
     public void refreshMetrics() {
         int books = 0, magazines = 0, journals = 0, borrowed = 0, available = 0;

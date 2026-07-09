@@ -4,15 +4,13 @@ package com.miva.model;
 public class Journal extends LibraryItem {
     private String volume;
 
-
     public Journal() {
-    super("", "", "", 0);
-    this.volume = "";
-}
+        super("", "", "", 0, false, "Journal");
+        this.volume = "";
+    }
 
-
-    public Journal(String id, String title, String author, int year, String volume) {
-        super(id, title, author, year);
+    public Journal(String id, String title, String author, int year, String volume, boolean isAvailable) {
+        super(id, title, author, year, isAvailable, "Journal");
         this.volume = volume;
     }
 
@@ -37,11 +35,12 @@ public class Journal extends LibraryItem {
     }
 
     @Override
-public boolean isAvailable() {
-    return this.isAvailable; 
-}
+    public boolean isAvailable() {
+        return this.isAvailable;
+    }
 
-
-public String getVolume() { return this.volume; }
+    public String getVolume() {
+        return this.volume;
+    }
 
 }

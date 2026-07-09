@@ -4,17 +4,14 @@ package com.miva.model;
 public class Magazine extends LibraryItem {
     private int issueNumber;
 
-
-
     // No aegument constructor for Magazine ( used by gson deserialization)
     public Magazine() {
-    super("", "", "", 0);
-    this.issueNumber = 0;
-}
+        super("", "", "", 0, false, "Magazine");
+        this.issueNumber = 0;
+    }
 
-
-    public Magazine(String id, String title, String author, int year, int issueNumber) {
-        super(id, title, author, year);
+    public Magazine(String id, String title, String author, int year, int issueNumber, boolean isAvailable) {
+        super(id, title, author, year, isAvailable, "Magazine");
         this.issueNumber = issueNumber;
     }
 
@@ -39,11 +36,12 @@ public class Magazine extends LibraryItem {
     }
 
     @Override
-public boolean isAvailable() {
-    return this.isAvailable; 
-}
+    public boolean isAvailable() {
+        return this.isAvailable;
+    }
 
-public int getIssueNumber() { return this.issueNumber; }
-
+    public int getIssueNumber() {
+        return this.issueNumber;
+    }
 
 }

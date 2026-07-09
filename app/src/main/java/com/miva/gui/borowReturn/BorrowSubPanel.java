@@ -10,40 +10,42 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.List;
-import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import com.miva.controller.BorrowController;
 import com.miva.controller.LibraryManager;
 import com.miva.model.LibraryItem;
 import com.miva.model.UserAccount;
+import com.miva.utils.Response;
 
 public class BorrowSubPanel extends JPanel {
     private final LibraryManager manager;
-    private JTextField txtUserId, txtItemId;
     private JComboBox<UserAccount> userComboAction;
     private JComboBox<LibraryItem> itemComboAction;
     private List<UserAccount> users;
     private List<LibraryItem> catalog;
+    private BorrowController borrowController;
 
     public BorrowSubPanel(LibraryManager manager) {
         this.manager = manager;
+        this.borrowController = new BorrowController(manager);
 
         // Container Alignment (BoxLayout vertical layout requirement compliance)
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBorder(new EmptyBorder(30, 30, 30, 30));
         this.setBackground(new Color(248, 249, 250));
 
-        // 1. HEADER TITLE SECTION
+        // HEADER TITLE SECTION
         JPanel headerPanel = new JPanel(new GridLayout(2, 1, 2, 2));
         headerPanel.setBackground(null);
         headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
@@ -75,40 +77,37 @@ public class BorrowSubPanel extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Row 0: Select User
+        // Fetch data initially
         users = manager.getUserManager().getAllUsers();
-        catalog = manager.getCatalogue();
+        catalog = manager.getAvailableItems();
 
+        // select User Form
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.3;
         formCard.add(createStyledLabel("Select User:"), gbc);
 
-        // FIX: Convert the List into an Array inside the JComboBox constructor
         userComboAction = new JComboBox<UserAccount>(users.toArray(new UserAccount[0]));
         userComboAction.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-
         gbc.gridx = 1;
         gbc.weightx = 0.7;
         formCard.add(userComboAction, gbc);
 
+        // Select Item Form
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.weightx = 0.3;
         formCard.add(createStyledLabel("Select Catalog Item:"), gbc);
-
-        // FIX: Convert the List into an Array inside the JComboBox constructor
         itemComboAction = new JComboBox<LibraryItem>(catalog.toArray(new LibraryItem[0]));
         itemComboAction.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-
         gbc.gridx = 1;
         gbc.weightx = 0.7;
         formCard.add(itemComboAction, gbc);
 
-        // Row 3: Action Trigger Button Configuration
-        JButton btnSubmit = new JButton("Process Transaction");
+        // Action Trigger Button Configuration
+        JButton btnSubmit = new JButton("Borrow Item");
         btnSubmit.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnSubmit.setBackground(new Color(56, 189, 248)); // Matches our Premium Blue Accent Palette
+        btnSubmit.setBackground(new Color(56, 189, 248));
         btnSubmit.setForeground(new Color(15, 23, 42));
         btnSubmit.setFocusPainted(false);
         btnSubmit.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -117,114 +116,75 @@ public class BorrowSubPanel extends JPanel {
         gbc.gridy = 3;
         gbc.weightx = 0.7;
         formCard.add(btnSubmit, gbc);
+        // Map operational callback trigger
+        btnSubmit.addActionListener(e -> executeBorrowProcess());
 
         this.add(formCard);
-
-        // Map operational callback trigger
-        btnSubmit.addActionListener(e -> executeCirculationPipeline());
-
     }
 
     /**
-     * Requirement: Interactive Circulation Engine with comprehensive error
+     * Requirement: Interactive borrow engine with comprehensive error
      * validation handling
      */
-    private void executeCirculationPipeline() {
-        String userId = txtUserId.getText().trim().toUpperCase();
-        String itemId = txtItemId.getText().trim().toUpperCase();
-        String chosenAction = (String) userComboAction.getSelectedItem();
+    private void executeBorrowProcess() {
+        UserAccount selectedUser = (UserAccount) userComboAction.getSelectedItem();
+        LibraryItem selectedItem = (LibraryItem) itemComboAction.getSelectedItem();
 
-        // Check 1: Mandatory parameter validation check
-        if (userId.isEmpty() || itemId.isEmpty()) {
+        // validate input
+        if (selectedUser == null || selectedItem == null) {
             JOptionPane.showMessageDialog(this,
-                    "Transaction Denied:\nPlease verify both Account ID and Item ID fields are populated.",
-                    "Missing Parameters", JOptionPane.WARNING_MESSAGE);
+                    "Borrow Denied:\nPlease make sure both fields are selected.",
+                    "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Check 2: Verify user registry records exist inside local file caches
-        Optional<UserAccount> userOpt = manager.getUserDatabase().getUserById(userId);
-        if (userOpt.isEmpty()) {
+        // extract ids
+        String userId = selectedUser.getUserId();
+        String itemId = selectedItem.getId();
+
+        // Process borrow request
+        Response<Void> result = borrowController.processBorrow(itemId, userId);
+
+        if (result.isSuccess()) {
             JOptionPane.showMessageDialog(this,
-                    "Transaction Denied:\nNo registered library member found matching ID: " + userId,
-                    "Account Conflict", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        UserAccount user = userOpt.get();
+                    result.getMessage(), // Updated to use encapsulation getter method
+                    "Transaction Approved", JOptionPane.INFORMATION_MESSAGE);
 
-        // Check 3: Verify item records exist in inventory mapping indices
-        // We look up the item matching the ID out of our catalogue array collection
-        LibraryItem targetItem = manager.getCatalogue().stream()
-                .filter(item -> item.getId().equals(itemId))
-                .findFirst()
-                .orElse(null);
-
-        if (targetItem == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Transaction Denied:\nNo material found in active registry matching ID: " + itemId,
-                    "Asset Catalog Conflict", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // 4. CORE BUSINESS CIRCUITS LOGIC
-        if ("Borrow Item".equals(chosenAction)) {
-            // Check 4: Handle inventory conflict conditions
-            if (!targetItem.isAvailable()) {
-                JOptionPane.showMessageDialog(this,
-                        "Operation Interrupted:\n\"" + targetItem.getTitle()
-                                + "\" is already checked out to another user account.",
-                        "Availability Alert", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            // Update item availability state attributes via its interface methods
-            boolean checkoutApproved = targetItem.borrowItem(userId);
-            if (checkoutApproved) {
-                targetItem.setAvailable(false);
-                // Append log event tracking codes right down inside member history collections
-                manager.getUserDatabase().logBorrowAction(userId, itemId);
-
-                // FORCE RESYNC: Update the central cache state registry and commit immediately
-                // to json files
-                manager.addItem(targetItem);
-
-                JOptionPane
-                        .showMessageDialog(this,
-                                "Success:\n\"" + targetItem.getTitle() + "\" successfully checked out to "
-                                        + user.getName() + ".",
-                                "Transaction Approved", JOptionPane.INFORMATION_MESSAGE);
-                clearInputs();
-            }
-
-        } else {
-            // PROCESSING THE RETURN OPTION TRACK
-            if (targetItem.isAvailable()) {
-                JOptionPane.showMessageDialog(this,
-                        "Operation Canceled:\n\"" + targetItem.getTitle()
-                                + "\" is already marked as available on shelves.",
-                        "Redundant Action", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            targetItem.returnItem();
-            targetItem.setAvailable(true);
-
-            // Re-save updated element states forcing serialization update loops
-            manager.addItem(targetItem);
-
-            JOptionPane.showMessageDialog(this,
-                    "Success:\n\"" + targetItem.getTitle() + "\" successfully checked back into storage arrays.",
-                    "Inventory Return Complete", JOptionPane.INFORMATION_MESSAGE);
+            // FIX 2: Refresh the dropdown listings directly from backend database caches
+            refreshComboBoxData();
             clearInputs();
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    result.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * Refresh data matrices and force refreshes UI ComboBox
+     * models
+     */
+    public void refreshComboBoxData() {
+        // Fetch up-to-date information
+        users = manager.getUserManager().getAllUsers();
+        catalog = manager.getAvailableItems();
+
+        // Overwrite internal model
+        userComboAction.setModel(new DefaultComboBoxModel<>(users.toArray(new UserAccount[0])));
+        itemComboAction.setModel(new DefaultComboBoxModel<>(catalog.toArray(new LibraryItem[0])));
+
+        // Notify rendering paths to redraw interface
+        this.revalidate();
+        this.repaint();
+    }
+
     private void clearInputs() {
-        txtUserId.setText("");
-        txtItemId.setText("");
-        userComboAction.setSelectedIndex(0);
-        itemComboAction.setSelectedIndex(0);
-        txtUserId.requestFocus();
+        if (userComboAction.getItemCount() > 0) {
+            userComboAction.setSelectedIndex(0);
+        }
+        if (itemComboAction.getItemCount() > 0) {
+            itemComboAction.setSelectedIndex(0);
+        }
     }
 
     private JLabel createStyledLabel(String text) {

@@ -5,12 +5,12 @@ public class Book extends LibraryItem {
     private String isbn;
 
     public Book() {
-        super("", "", "", 0);
+        super("", "", "", 0, false, "Book");
         this.isbn = "";
     }
 
-    public Book(String id, String title, String author, int year, String isbn) {
-        super(id, title, author, year);
+    public Book(String id, String title, String author, int year, String isbn, boolean isAvailable) {
+        super(id, title, author, year, isAvailable, "Book");
         this.isbn = isbn;
     }
 
@@ -35,8 +35,8 @@ public class Book extends LibraryItem {
     }
 
     @Override
-public boolean isAvailable() {
-    return this.isAvailable; // Ensure it matches the 'boolean' type from your interface
-}
+    public boolean isAvailable() {
+        return this.isAvailable;
+    }
 
 }

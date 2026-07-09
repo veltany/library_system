@@ -1,12 +1,22 @@
 package com.miva.gui;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+
 import com.miva.controller.LibraryManager;
 import com.miva.gui.items.ItemsViewPanel;
 import com.miva.gui.users.UserManagementHub;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import com.miva.utils.RefreshObject;
 
 public class MainWindow extends JFrame {
     private LibraryManager manager;
@@ -25,12 +35,12 @@ public class MainWindow extends JFrame {
         setTitle("Smart Library Circulation & Automation System");
         setSize(1100, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
         this.manager = new LibraryManager();
 
-        // 1. BUILD ROUTER DECKS (CardLayout)
+        // BUILD ROUTER DECKS (CardLayout)
         cardLayout = new CardLayout();
         centerContentPane = new JPanel(cardLayout);
 
@@ -40,7 +50,6 @@ public class MainWindow extends JFrame {
         borrowReturnPanel = new BorrowPanel(manager);
         searchSortPanel = createPlaceholderPanel("Search, Sort & Filters");
         UserManagementHub userHub = new UserManagementHub(manager.getUserManager());
-        
 
         centerContentPane.add(homePanel, "Home");
         centerContentPane.add(adminPanel, "Admin");
@@ -49,11 +58,13 @@ public class MainWindow extends JFrame {
         centerContentPane.add(searchSortPanel, "SearchSort");
         centerContentPane.add(userHub, "UserManagement");
 
-        // 2. ATTACH THE SEPARATE PREMIUM SIDEBAR COMPONENT
-        // Lambda interceptor seamlessly catches string tokens whenever nav nodes are clicked
-        SideBar navigationSidebar = new SideBar(viewKey -> switchScreen(viewKey));
+        // ATTACH THE SEPARATE SIDEBAR COMPONENT
+        RefreshObject refreshablePanels = new RefreshObject();
+        refreshablePanels.add(viewItemsPanel);
 
-        // 3. ASSEMBLE PANE REGIONS
+        SideBar navigationSidebar = new SideBar(viewKey -> switchScreen(viewKey), manager, refreshablePanels);
+
+        // ASSEMBLE PANE REGIONS
         this.add(navigationSidebar, BorderLayout.WEST);
         this.add(centerContentPane, BorderLayout.CENTER);
         this.add(createStatusBar(), BorderLayout.SOUTH);
@@ -64,8 +75,8 @@ public class MainWindow extends JFrame {
     public void switchScreen(String screenName) {
         cardLayout.show(centerContentPane, screenName);
         lblStatus.setText("Viewing Active Panel: " + screenName + " Dashboard view frame.");
-        
-        // Refresh telemetry database metrics instances whenever navigating back Home
+
+        // Refresh metrics
         if ("Home".equals(screenName)) {
             homePanel.refreshMetrics();
         }
@@ -75,9 +86,8 @@ public class MainWindow extends JFrame {
         JPanel statusBar = new JPanel(new BorderLayout());
         statusBar.setBackground(new Color(236, 240, 241));
         statusBar.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(189, 195, 199)),
-            new EmptyBorder(5, 10, 5, 10)
-        ));
+                BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(189, 195, 199)),
+                new EmptyBorder(5, 10, 5, 10)));
         lblStatus = new JLabel("System Operational | Connected to JSON File Engine Cache");
         lblStatus.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblStatus.setForeground(new Color(127, 140, 141));

@@ -1,0 +1,21 @@
+[
+  {
+    "userId": "5E6296F8",
+    "name": "Samuel Chukwu",
+    "borrowingHistory": [
+      "F8827A62",
+      "F8827A62",
+      "0BC6F4F2",
+      "F8827A62",
+      "B75D9692",
+      "83930547"
+    ]
+  },
+  {
+    "userId": "3370CB8A",
+    "name": "Chinedu Okafor",
+    "borrowingHistory": [
+      "B75D9692"
+    ]
+  }
+]

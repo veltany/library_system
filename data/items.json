@@ -5,7 +5,8 @@
     "title": "dffdd",
     "author": "dd",
     "year": 33,
-    "isAvailable": true
+    "isAvailable": false,
+    "type": "Book"
   },
   {
     "isbn": "3456-78889-9999",
@@ -13,6 +14,52 @@
     "title": "Things Fall Apart",
     "author": "Chinua achebe",
     "year": 1997,
-    "isAvailable": true
+    "isAvailable": true,
+    "type": "Book"
+  },
+  {
+    "isbn": "4567966070700",
+    "id": "0BC6F4F2",
+    "title": "Arrow of God",
+    "author": "Chinua Achebe",
+    "year": 1997,
+    "isAvailable": false,
+    "type": "Book"
+  },
+  {
+    "isbn": "36788999",
+    "id": "3958F94C",
+    "title": "Twilight",
+    "author": "Cyprain Ekwensi",
+    "year": 1890,
+    "isAvailable": true,
+    "type": "Book"
+  },
+  {
+    "volume": "",
+    "id": "83930547",
+    "title": "Allure",
+    "author": "African Feb Publishers",
+    "year": 2022,
+    "isAvailable": false,
+    "type": "Journal"
+  },
+  {
+    "isbn": "6788888",
+    "id": "4BD76EC9",
+    "title": "African Journal Of Life",
+    "author": "Chimamanda Adichie",
+    "year": 2027,
+    "isAvailable": true,
+    "type": "Book"
+  },
+  {
+    "volume": "2537784884",
+    "id": "182BA644",
+    "title": "Uwa mgbede",
+    "author": "Mike Ejeagha",
+    "year": 2025,
+    "isAvailable": true,
+    "type": "Journal"
   }
 ]

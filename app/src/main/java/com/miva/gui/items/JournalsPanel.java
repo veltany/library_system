@@ -1,17 +1,28 @@
 package com.miva.gui.items;
 
-import com.miva.controller.LibraryManager;
-import com.miva.model.Journal;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JournalsPanel extends JPanel {
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import com.miva.controller.LibraryManager;
+import com.miva.model.Journal;
+import com.miva.model.Refreshable;
+
+public class JournalsPanel extends JPanel implements Refreshable {
     private final LibraryManager manager;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -23,11 +34,13 @@ public class JournalsPanel extends JPanel {
         this.setBackground(Color.WHITE);
 
         // Column Schemas (Includes specific Volume String)
-        String[] columns = {"ID", "Academic Title", "Author", "Year", "Volume / Issue", "Status"};
-        
+        String[] columns = { "ID", "Academic Title", "Author", "Year", "Volume / Issue", "Status" };
+
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
 
         table = new JTable(tableModel);
@@ -39,14 +52,15 @@ public class JournalsPanel extends JPanel {
         // Advanced GUI Technique 1.0: Custom Renderer for dynamic color coding
         table.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable t, Object val, boolean isSel, boolean hasFoc, int r, int c) {
+            public Component getTableCellRendererComponent(JTable t, Object val, boolean isSel, boolean hasFoc, int r,
+                    int c) {
                 Component cell = super.getTableCellRendererComponent(t, val, isSel, hasFoc, r, c);
                 setFont(new Font("Segoe UI", Font.BOLD, 13));
                 if (val != null) {
                     if ("Available".equals(val.toString())) {
                         cell.setForeground(new Color(46, 204, 113)); // Green
                     } else {
-                        cell.setForeground(new Color(231, 76, 60));  // Red
+                        cell.setForeground(new Color(231, 76, 60)); // Red
                     }
                 }
                 return cell;
@@ -73,6 +87,7 @@ public class JournalsPanel extends JPanel {
         refreshData();
     }
 
+    @Override
     public void refreshData() {
         tableModel.setRowCount(0);
         List<Journal> journals = manager.getCatalogue().stream()
@@ -82,12 +97,12 @@ public class JournalsPanel extends JPanel {
 
         for (Journal j : journals) {
             Object[] row = {
-                j.getId(),
-                j.getTitle(),
-                j.getAuthor(),
-                j.getYear(),
-                j.getVolume(),
-                j.isAvailable() ? "Available" : "Borrowed"
+                    j.getId(),
+                    j.getTitle(),
+                    j.getAuthor(),
+                    j.getYear(),
+                    j.getVolume(),
+                    j.isAvailable() ? "Available" : "Borrowed"
             };
             tableModel.addRow(row);
         }
